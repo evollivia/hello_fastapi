@@ -81,7 +81,15 @@ def readone_sj(sjno: int, db: Session = Depends(get_db)):
     sungjuk = db.query(Sungjuk).filter(Sungjuk.sjno == sjno).first()
     return sungjuk
 
-
+# 성적 삭제 - 학생 번호로 조회
+# 먼저, 삭제할 학생 데이터가 있는지 확인한 후 삭제 실행
+@app.delete('/sj/{sjno}', response_model=Optional[SungjukModel])
+def delete_sj(sjno: int, db: Session = Depends(get_db)):
+    sungjuk = db.query(Sungjuk).filter(Sungjuk.sjno == sjno).first()
+    if sungjuk:
+        db.delete(sungjuk)
+        db.commit()
+    return sungjuk
 
 if __name__ == "__main__":
     import uvicorn
