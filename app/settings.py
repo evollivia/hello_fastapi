@@ -8,4 +8,4 @@ class Settings(BaseSettings):
     dburl = ''
     sqlite_url = f'sqlite:///app/{dbname}.db'
 
-config = Settings
+config = Settings()
