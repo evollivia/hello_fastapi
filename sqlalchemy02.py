@@ -63,7 +63,7 @@ def read_member(db: Session = Depends(get_db)):
     return members
 
 # 멤버 추가
-@app.post('/member', response_model=MemberModel)
+@app.post('/member', response_model=NewMemberModel)
 def add_member(m: NewMemberModel, db: Session = Depends(get_db)):
     m = Member(**dict(m))
     db.add(m)
@@ -73,7 +73,7 @@ def add_member(m: NewMemberModel, db: Session = Depends(get_db)):
     # return '데이커 입력 성공'
 
 # 멤버 상세 조회
-@app.get('/member/{mno}', response_model=List[MemberModel])
+@app.get('/member/{mno}', response_model=Optional[MemberModel])
 def readone_member(mno: int, db: Session = Depends(get_db)):
     member = db.query(Member).filter(Member.mno == mno).first()
     return member
@@ -88,7 +88,7 @@ def delete_member(mno: int, db: Session = Depends(get_db)):
     return member
 
 # 멤버 수정
-@app.put('/sj', response_model=Optional[MemberModel])
+@app.put('/member', response_model=Optional[MemberModel])
 def update_member(m: MemberModel, db: Session = Depends(get_db)):
     member = db.query(Member).filter(Member.mno == m.mno).first()
     if member:
