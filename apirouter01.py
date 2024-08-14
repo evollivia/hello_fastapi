@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.dbfactory import db_startup, db_shutdown
+from app.routes.member_router import member_router
+from app.routes.sungjuk_router import sungjuk_router
 
 
 # 서버 시작시 DB 생성
@@ -24,6 +26,10 @@ app = FastAPI(lifespan=lifespan)
 def index():
     return 'Hello, APIRouter'
 
+
+# 외부 라우트 파일 불러오기
+app.include_router(member_router, prefix='/member')
+app.include_router(sungjuk_router, prefix='/sungjuk')
 
 if __name__ == "__main__":
     import uvicorn
