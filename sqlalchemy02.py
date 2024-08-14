@@ -88,7 +88,7 @@ def delete_member(mno: int, db: Session = Depends(get_db)):
     return member
 
 # 멤버 수정
-@app.put('/member', response_model=Optional[MemberModel])
+@app.put('/member/{mno}', response_model=Optional[MemberModel])
 def update_member(m: MemberModel, db: Session = Depends(get_db)):
     member = db.query(Member).filter(Member.mno == m.mno).first()
     if member:
