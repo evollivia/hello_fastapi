@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from fastapi import FastAPI
@@ -38,13 +39,15 @@ def get_db():
         db.close()          # 데이터베이스 세션 닫음(db연결 해제, 리소스 반환)
 
 # pydantic 모델
-class MemberModel(BaseModel):
-    mno: int
+class NewMemberModel(BaseModel):
     userid: str
     passwd: str
     name: str
     email: str
-    regdate: str
+
+class MemberModel(NewMemberModel):
+    mno: int
+    regdate: datetime
 
 # FastAPI 메인
 app = FastAPI()
@@ -61,22 +64,23 @@ def read_member(db: Session = Depends(get_db)):
 
 # 멤버 추가
 @app.post('/member', response_model=MemberModel)
-def madd(m:MemberModel, db: Session = Depends(get_db)):
+def add_member(m: NewMemberModel, db: Session = Depends(get_db)):
     m = Member(**dict(m))
     db.add(m)
-    db.commit(m)
+    db.commit()
     db.refresh(m)
     return m
+    # return '데이커 입력 성공'
 
 # 멤버 상세 조회
 @app.get('/member/{mno}', response_model=List[MemberModel])
-def readone_m(mno: int, db: Session = Depends(get_db)):
+def readone_member(mno: int, db: Session = Depends(get_db)):
     member = db.query(Member).filter(Member.mno == mno).first()
     return member
 
 # 멤버 삭제
 @app.delete('/member/{mno}', response_model=Optional[MemberModel])
-def delete_m(mno: int, db: Session = Depends(get_db)):
+def delete_member(mno: int, db: Session = Depends(get_db)):
     member = db.query(Member).filter(Member.mno == mno).first()
     if member:
         db.delete(member)
@@ -85,7 +89,7 @@ def delete_m(mno: int, db: Session = Depends(get_db)):
 
 # 멤버 수정
 @app.put('/sj', response_model=Optional[MemberModel])
-def update_m(m: MemberModel, db: Session = Depends(get_db)):
+def update_member(m: MemberModel, db: Session = Depends(get_db)):
     member = db.query(Member).filter(Member.mno == m.mno).first()
     if member:
         for key, val in m.dict().items():
